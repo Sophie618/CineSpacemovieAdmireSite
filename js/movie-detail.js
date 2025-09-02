@@ -10,31 +10,52 @@ let currentGallery = [];
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('movie-detail.js 已加载');
+    console.log('当前URL:', window.location.href);
     loadMovieData();
 });
 
 // 从JSON文件加载电影数据
 async function loadMovieData() {
     try {
-        const response = await fetch('data/movies.json');
+        console.log('开始加载电影数据...');
+        const response = await fetch('./data/movies.json');
+        console.log('响应状态:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`HTTP错误: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('原始数据:', data);
         movieData = data.movies;
+        console.log('电影数据:', movieData);
 
         // 获取URL参数中的电影ID
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
 
+        console.log('URL参数:', window.location.search);
+        console.log('电影ID:', movieId);
+        console.log('可用的电影ID:', Object.keys(movieData));
+
         if (movieId && movieData[movieId]) {
+            console.log('找到电影:', movieData[movieId]);
             currentMovie = movieData[movieId];
             loadMovieDetails(movieId);
             loadRelatedMovies(movieId);
         } else {
+            console.log('未找到电影ID或电影数据，重定向到首页');
+            console.log('movieId存在:', !!movieId);
+            console.log('movieData存在:', !!movieData);
+            console.log('movieData[movieId]存在:', !!(movieId && movieData[movieId]));
             // 如果没有找到电影ID，重定向到首页
             window.location.href = 'index.html';
         }
     } catch (error) {
         console.error('加载电影数据失败:', error);
-        alert('加载电影数据失败，请刷新页面重试');
+        // 静默处理错误，重定向到首页
+        window.location.href = 'index.html';
     }
 }
 
@@ -79,100 +100,57 @@ function loadMovieDetails(movieId) {
     document.getElementById('category-link').href = categoryMap[movie.category] || 'index.html';
     document.getElementById('category-link').textContent = movie.category;
 
-    // 加载海报展示
-    loadMovieGallery(movie);
+    // 海报展示已简化，只需要主海报
+    // loadMovieGallery(movie); // 已移除多张海报功能
 }
 
-// 加载电影海报展示
+// 加载电影海报展示（已移除，现在用于视频区域）
 function loadMovieGallery(movie) {
-    currentGallery = movie.gallery || [movie.poster];
-    currentImageIndex = 0;
-
-    // 设置主图片
-    const mainImage = document.getElementById('main-gallery-image');
-    mainImage.src = `public/images/posters/${currentGallery[0]}`;
-    mainImage.alt = movie.title;
-
-    // 生成缩略图
-    const thumbnailsContainer = document.getElementById('gallery-thumbnails');
-    thumbnailsContainer.innerHTML = '';
-
-    currentGallery.forEach((image, index) => {
-        const thumbnail = document.createElement('div');
-        thumbnail.className = 'gallery-thumbnail';
-        if (index === 0) thumbnail.classList.add('active');
-
-        thumbnail.innerHTML = `
-            <img src="public/images/posters/${image}" alt="${movie.title} 海报 ${index + 1}" 
-                 onclick="selectThumbnail(${index})">
-        `;
-
-        thumbnailsContainer.appendChild(thumbnail);
-    });
+    // 海报画廊功能已移除，现在显示视频区域
+    console.log('海报画廊功能已移除，电影:', movie.title);
+    // 不再需要加载海报，因为我们已经改为视频区域
 }
 
-// 选择缩略图
+// 选择缩略图（已移除）
 function selectThumbnail(index) {
-    currentImageIndex = index;
-
-    // 更新主图片
-    const mainImage = document.getElementById('main-gallery-image');
-    mainImage.src = `public/images/posters/${currentGallery[index]}`;
-
-    // 更新缩略图激活状态
-    const thumbnails = document.querySelectorAll('.gallery-thumbnail');
-    thumbnails.forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === index);
-    });
+    // 缩略图功能已移除
+    console.log('缩略图功能已移除');
 }
 
-// 打开图片查看模态框
+// 打开图片查看模态框（已移除）
 function openGalleryModal() {
-    const modal = document.getElementById('gallery-modal');
-    const modalImage = document.getElementById('modal-image');
-
-    modalImage.src = `public/images/posters/${currentGallery[currentImageIndex]}`;
-    modal.style.display = 'block';
-
-    // 阻止背景滚动
-    document.body.style.overflow = 'hidden';
+    // 图片模态框功能已移除
+    console.log('图片模态框功能已移除');
 }
 
-// 关闭图片查看模态框
+// 关闭图片查看模态框（已移除）
 function closeGalleryModal() {
-    const modal = document.getElementById('gallery-modal');
-    modal.style.display = 'none';
-
-    // 恢复背景滚动
-    document.body.style.overflow = 'auto';
+    // 图片模态框功能已移除
+    console.log('图片模态框功能已移除');
 }
 
-// 上一张图片
+// 上一张图片（已移除）
 function previousImage() {
-    currentImageIndex = currentImageIndex > 0 ? currentImageIndex - 1 : currentGallery.length - 1;
-    updateModalImage();
-    updateThumbnailSelection();
+    // 图片导航功能已移除
+    console.log('图片导航功能已移除');
 }
 
-// 下一张图片
+// 下一张图片（已移除）
 function nextImage() {
-    currentImageIndex = currentImageIndex < currentGallery.length - 1 ? currentImageIndex + 1 : 0;
-    updateModalImage();
-    updateThumbnailSelection();
+    // 图片导航功能已移除
+    console.log('图片导航功能已移除');
 }
 
-// 更新模态框图片
+// 更新模态框图片（已移除）
 function updateModalImage() {
-    const modalImage = document.getElementById('modal-image');
-    modalImage.src = `public/images/posters/${currentGallery[currentImageIndex]}`;
+    // 模态框图片功能已移除
+    console.log('模态框图片功能已移除');
 }
 
-// 更新缩略图选择状态
+// 更新缩略图选择状态（已移除）
 function updateThumbnailSelection() {
-    const thumbnails = document.querySelectorAll('.gallery-thumbnail');
-    thumbnails.forEach((thumb, i) => {
-        thumb.classList.toggle('active', i === currentImageIndex);
-    });
+    // 缩略图选择功能已移除
+    console.log('缩略图选择功能已移除');
 }
 
 // 加载相关电影
@@ -239,25 +217,184 @@ function shareMovie() {
     }
 }
 
+// 图片模态框键盘事件已移除
+// document.addEventListener('keydown', function (e) {
+//     const modal = document.getElementById('gallery-modal');
+//     if (modal && modal.style.display === 'block') {
+//         switch (e.key) {
+//             case 'Escape':
+//                 closeGalleryModal();
+//                 break;
+//             case 'ArrowLeft':
+//                 previousImage();
+//                 break;
+//             case 'ArrowRight':
+//                 nextImage();
+//                 break;
+//         }
+//     }
+// });
+
+// 图片模态框事件监听器已移除
+// document.getElementById('gallery-modal').addEventListener('click', function (e) {
+//     if (e.target === this) {
+//         closeGalleryModal();
+//     }
+// });
+
+// 视频相关函数
+function openVideoModal() {
+    const modal = document.getElementById('video-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal() {
+    const modal = document.getElementById('video-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+
+    // 停止视频播放
+    const videoPlayer = modal.querySelector('video');
+    if (videoPlayer) {
+        videoPlayer.pause();
+        videoPlayer.currentTime = 0;
+    }
+}
+
+// 键盘事件处理（视频模态框）
 document.addEventListener('keydown', function (e) {
-    const modal = document.getElementById('gallery-modal');
-    if (modal.style.display === 'block') {
+    const videoModal = document.getElementById('video-modal');
+    if (videoModal.style.display === 'flex') {
         switch (e.key) {
             case 'Escape':
-                closeGalleryModal();
-                break;
-            case 'ArrowLeft':
-                previousImage();
-                break;
-            case 'ArrowRight':
-                nextImage();
+                closeVideoModal();
                 break;
         }
     }
 });
 
-document.getElementById('gallery-modal').addEventListener('click', function (e) {
-    if (e.target === this) {
-        closeGalleryModal();
+// 点击模态框外部关闭
+document.addEventListener('DOMContentLoaded', function () {
+    const videoModal = document.getElementById('video-modal');
+    if (videoModal) {
+        videoModal.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeVideoModal();
+            }
+        });
     }
+
+    // 初始化回到顶部和音乐控制功能
+    initBackToTop();
+    initMusicPlayer();
 });
+
+/**
+ * 初始化回到顶部功能
+ */
+function initBackToTop() {
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    if (backToTopBtn) {
+        // 监听滚动事件
+        window.addEventListener('scroll', function () {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.style.display = 'block';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+
+        // 点击返回顶部
+        backToTopBtn.addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+/**
+ * 初始化音乐播放器
+ */
+function initMusicPlayer() {
+    const musicToggle = document.getElementById('music-toggle');
+    const backgroundMusic = document.getElementById('background-music');
+    const volumeSlider = document.getElementById('volume-slider');
+
+    if (!musicToggle || !backgroundMusic) {
+        console.log('音乐播放器元素未找到');
+        return;
+    }
+
+    // 从本地存储获取音乐状态
+    const isMusicEnabled = localStorage.getItem('musicEnabled') === 'true';
+    const musicVolume = parseFloat(localStorage.getItem('musicVolume')) || 0.3;
+
+    // 设置初始状态
+    backgroundMusic.volume = musicVolume;
+    if (volumeSlider) {
+        volumeSlider.value = musicVolume;
+    }
+
+    if (isMusicEnabled) {
+        backgroundMusic.play().catch(e => {
+            console.log('自动播放被阻止:', e);
+        });
+        musicToggle.classList.add('playing');
+        musicToggle.textContent = '🎵';
+    } else {
+        musicToggle.textContent = '🔇';
+    }
+
+    // 点击切换播放/暂停
+    musicToggle.addEventListener('click', function () {
+        if (backgroundMusic.paused) {
+            backgroundMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+                musicToggle.textContent = '🎵';
+                localStorage.setItem('musicEnabled', 'true');
+            }).catch(e => {
+                console.log('播放失败:', e);
+                alert('无法播放音乐，请检查浏览器设置');
+            });
+        } else {
+            backgroundMusic.pause();
+            musicToggle.classList.remove('playing');
+            musicToggle.textContent = '🔇';
+            localStorage.setItem('musicEnabled', 'false');
+        }
+    });
+
+    // 音量控制
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', function () {
+            backgroundMusic.volume = this.value;
+            localStorage.setItem('musicVolume', this.value);
+        });
+    }
+
+    // 监听音乐播放状态
+    backgroundMusic.addEventListener('play', function () {
+        musicToggle.classList.add('playing');
+        musicToggle.textContent = '🎵';
+    });
+
+    backgroundMusic.addEventListener('pause', function () {
+        musicToggle.classList.remove('playing');
+        musicToggle.textContent = '🔇';
+    });
+
+    // 监听音乐结束
+    backgroundMusic.addEventListener('ended', function () {
+        backgroundMusic.currentTime = 0;
+        backgroundMusic.play();
+    });
+
+    // 音量变化监听
+    backgroundMusic.addEventListener('volumechange', function () {
+        localStorage.setItem('musicVolume', backgroundMusic.volume);
+    });
+}

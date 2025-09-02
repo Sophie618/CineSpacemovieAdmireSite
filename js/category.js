@@ -3,6 +3,9 @@
  * 处理电影列表、筛选、分页等功能
  */
 
+// 立即执行的测试代码
+console.log('category.js 文件已加载');
+
 // 全局变量
 let movieData = {};
 let currentPage = 1;
@@ -10,10 +13,81 @@ let currentFilter = 'all';
 let currentCategory = '';
 let moviesPerPage = 6;
 
+/**
+ * 显示通知消息
+ * @param {string} message - 通知消息内容
+ * @param {string} type - 通知类型 (success, error, info)
+ */
+function showNotification(message, type = 'info') {
+    // 关闭现有通知
+    closeAllNotifications();
+
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+
+    // 根据类型设置颜色
+    const colors = {
+        success: '#27ae60',
+        error: '#e74c3c',
+        info: '#3498db'
+    };
+    notification.style.background = colors[type] || colors.info;
+
+    // 添加到页面
+    document.body.appendChild(notification);
+
+    // 显示动画
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+
+    // 自动消失
+    setTimeout(() => {
+        closeNotification(notification);
+    }, 3000);
+}
+
+/**
+ * 关闭单个通知
+ * @param {HTMLElement} notification - 通知元素
+ */
+function closeNotification(notification) {
+    if (notification && document.body.contains(notification)) {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }
+}
+
+function closeAllNotifications() {
+    const notifications = document.querySelectorAll('.notification');
+    notifications.forEach(notification => {
+        closeNotification(notification);
+    });
+}
+
 // 等待DOM加载完成
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM已加载完成');
+
     // 获取当前分类
     currentCategory = getCurrentCategory();
+    console.log('当前分类:', currentCategory);
+    console.log('当前URL:', window.location.href);
+
+    // 检查必要的DOM元素
+    const moviesGrid = document.getElementById('movies-grid');
+    console.log('movies-grid元素:', moviesGrid);
+
+    // 初始化面包屑导航
+    initBreadcrumb();
 
     // 加载电影数据
     loadMovieData();
@@ -34,6 +108,7 @@ async function loadMovieData() {
         initCategoryNavigation();
     } catch (error) {
         console.error('加载电影数据失败:', error);
+        console.log('错误详情:', error);
         showErrorState();
     }
 }
@@ -45,6 +120,11 @@ function getCurrentCategory() {
     const path = window.location.pathname;
     const filename = path.split('/').pop().replace('.html', '');
 
+    // 处理GitHub Pages路径
+    if (filename === '' || filename === 'CineSpacemovieAdmireSite') {
+        return 'action'; // 默认分类
+    }
+
     // 处理特殊文件名
     if (filename === 'sci-fi') return 'sci-fi';
     return filename;
@@ -55,25 +135,29 @@ function getCurrentCategory() {
  */
 function getPosterImage(movieId) {
     const posterMap = {
-        1: 'action1.svg',
-        2: 'action1.svg',
-        3: 'action1.svg',
-        4: 'action1.svg',
-        5: 'action1.svg',
-        6: 'drama1.svg',
-        7: 'drama1.svg',
-        8: 'drama1.svg',
-        9: 'comedy1.svg',
-        10: 'comedy1.svg',
-        11: 'action1.svg',
-        12: 'action1.svg',
-        13: 'comedy1.svg',
-        14: 'comedy1.svg',
-        15: 'drama1.svg',
-        16: 'drama1.svg'
+        1: 'action1.jpg',
+        2: 'action2.jpg',
+        3: 'action3.jpg',
+        4: 'action4.jpg',
+        5: 'action5.jpg',
+        6: 'drama1.jpg',
+        7: 'drama2.jpg',
+        8: 'drama3.jpg',
+        9: 'comedy1.jpg',
+        10: 'comedy2.jpg',
+        11: 'comedy3.jpg',
+        12: 'scifi1.jpg',
+        13: 'scifi2.jpg',
+        14: 'scifi3.jpg',
+        15: 'animation1.jpg',
+        16: 'animation2.jpg',
+        17: 'animation3.jpg',
+        18: 'romance1.jpg',
+        19: 'romance2.jpg',
+        20: 'romance3.jpg'
     };
 
-    return posterMap[movieId] || 'action1.svg';
+    return posterMap[movieId] || 'action1.jpg';
 }
 
 /**
@@ -126,7 +210,11 @@ function loadMovies() {
     // 根据分类获取电影数据
     const movies = getMoviesByCategory(currentCategory);
 
+    console.log('当前分类:', currentCategory);
+    console.log('电影数量:', movies.length);
+
     if (movies.length === 0) {
+        console.log('没有找到电影，显示空状态');
         showEmptyState();
         return;
     }
@@ -195,9 +283,12 @@ function renderMovies(movies) {
         return;
     }
 
-    moviesGrid.innerHTML = movies.map(movie => `
-        <div class="movie-card" data-movie-id="${movie.id}">
-            <div class="movie-poster" style="background-image: url('public/images/posters/${getPosterImage(movie.id)}'); background-size: cover; background-position: center;">
+    moviesGrid.innerHTML = movies.map((movie, index) => {
+        // 从movieData中找到对应的ID
+        const movieId = Object.keys(movieData).find(id => movieData[id] === movie);
+        return `
+        <div class="movie-card" data-movie-id="${movieId}">
+            <div class="movie-poster" style="background-image: url('public/images/posters/${getPosterImage(movieId)}'); background-size: cover; background-position: center;">
                 <div class="poster-overlay">
                     <span class="movie-title-overlay">${movie.title}</span>
                 </div>
@@ -213,12 +304,13 @@ function renderMovies(movies) {
                 </div>
                 <p class="movie-description">${movie.description}</p>
                 <div class="movie-actions">
-                    <button class="btn btn-primary" onclick="viewMovie(${movie.id})">查看详情</button>
-                    <button class="btn btn-secondary" onclick="addToFavorites(${movie.id})">收藏</button>
+                    <button class="btn btn-primary" onclick="viewMovie('${movieId}')">查看详情</button>
+                    <button class="btn btn-secondary" onclick="addToFavorites('${movieId}')">收藏</button>
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     animateMovieCards();
 }
@@ -373,7 +465,15 @@ function handleSearch() {
  * 查看电影详情
  */
 function viewMovie(movieId) {
-    window.location.href = `movie-detail.html?id=${movieId}`;
+    console.log('viewMovie被调用，movieId:', movieId);
+    console.log('movieId类型:', typeof movieId);
+    console.log('即将跳转到:', `movie-detail.html?id=${movieId}`);
+    showNotification(`正在跳转到电影详情页面...`, 'info');
+
+    setTimeout(() => {
+        console.log('开始跳转到电影详情页面');
+        window.location.href = `movie-detail.html?id=${movieId}`;
+    }, 1000);
 }
 
 /**
@@ -469,10 +569,15 @@ function renderMoviesWithNavigation(movies) {
         return;
     }
 
-    moviesGrid.innerHTML = movies.map(movie => `
-        <div class="movie-card" data-movie-id="${movie.id}" onclick="handleMovieCardClick(${movie.id})">
-            <div class="movie-poster">
-                <span>${movie.title}</span>
+    moviesGrid.innerHTML = movies.map(movie => {
+        // 从movieData中找到对应的ID
+        const movieId = Object.keys(movieData).find(id => movieData[id] === movie);
+        return `
+        <div class="movie-card" data-movie-id="${movieId}" onclick="handleMovieCardClick('${movieId}')">
+            <div class="movie-poster" style="background-image: url('public/images/posters/${getPosterImage(movieId)}'); background-size: cover; background-position: center;">
+                <div class="poster-overlay">
+                    <span class="movie-title-overlay">${movie.title}</span>
+                </div>
             </div>
             <div class="movie-info">
                 <h3 class="movie-title">${movie.title}</h3>
@@ -485,12 +590,13 @@ function renderMoviesWithNavigation(movies) {
                 </div>
                 <p class="movie-description">${movie.description}</p>
                 <div class="movie-actions">
-                    <button class="btn btn-primary" onclick="event.stopPropagation(); viewMovie(${movie.id})">查看详情</button>
-                    <button class="btn btn-secondary" onclick="event.stopPropagation(); addToFavorites(${movie.id})">收藏</button>
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); viewMovie('${movieId}')">查看详情</button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); addToFavorites('${movieId}')">收藏</button>
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     animateMovieCards();
 }
@@ -513,11 +619,241 @@ function handleMovieCardClick(movieId) {
     }
 }
 
+/**
+ * 初始化面包屑导航
+ */
+function initBreadcrumb() {
+    // 检查是否在分类页面
+    const currentPage = getCurrentPageType();
+    if (currentPage !== 'home') {
+        addBreadcrumb(currentPage);
+    }
+}
+
+/**
+ * 获取当前页面类型
+ */
+function getCurrentPageType() {
+    const path = window.location.pathname;
+    const filename = path.split('/').pop().replace('.html', '');
+
+    if (filename === 'index' || filename === '') {
+        return 'home';
+    }
+
+    return filename;
+}
+
+/**
+ * 添加面包屑导航
+ */
+function addBreadcrumb(pageType) {
+    const main = document.querySelector('.main');
+    if (!main) return;
+
+    const breadcrumb = document.createElement('nav');
+    breadcrumb.className = 'breadcrumb';
+    breadcrumb.innerHTML = `
+        <div class="breadcrumb-content">
+            <a href="index.html" class="breadcrumb-link">首页</a>
+            <span class="breadcrumb-separator">></span>
+            <span class="breadcrumb-current">${getPageTitle(pageType)}</span>
+        </div>
+    `;
+
+    // 在main的第一个子元素前插入面包屑
+    main.insertBefore(breadcrumb, main.firstChild);
+
+    // 添加面包屑样式
+    addBreadcrumbStyles();
+}
+
+/**
+ * 获取页面标题
+ */
+function getPageTitle(pageType) {
+    const titles = {
+        'action': '动作片',
+        'drama': '剧情片',
+        'comedy': '喜剧片',
+        'sci-fi': '科幻片',
+        'animation': '动画片',
+        'romance': '爱情片'
+    };
+
+    return titles[pageType] || pageType;
+}
+
+/**
+ * 添加面包屑样式
+ */
+function addBreadcrumbStyles() {
+    if (document.getElementById('breadcrumb-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'breadcrumb-styles';
+    style.textContent = `
+        .breadcrumb {
+            background: #f8f9fa;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-radius: 5px;
+        }
+        
+        .breadcrumb-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb-link {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb-link:hover {
+            color: #2980b9;
+        }
+        
+        .breadcrumb-separator {
+            color: #666;
+        }
+        
+        .breadcrumb-current {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+    `;
+
+    document.head.appendChild(style);
+}
+
+/**
+ * 初始化回到顶部功能
+ */
+function initBackToTop() {
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    if (backToTopBtn) {
+        // 监听滚动事件
+        window.addEventListener('scroll', function () {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.style.display = 'block';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+
+        // 点击返回顶部
+        backToTopBtn.addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+/**
+ * 初始化音乐播放器
+ */
+function initMusicPlayer() {
+    const musicToggle = document.getElementById('music-toggle');
+    const backgroundMusic = document.getElementById('background-music');
+    const volumeSlider = document.getElementById('volume-slider');
+
+    if (!musicToggle || !backgroundMusic) {
+        console.log('音乐播放器元素未找到');
+        return;
+    }
+
+    // 从本地存储获取音乐状态
+    const isMusicEnabled = localStorage.getItem('musicEnabled') === 'true';
+    const musicVolume = parseFloat(localStorage.getItem('musicVolume')) || 0.3;
+
+    // 设置初始状态
+    backgroundMusic.volume = musicVolume;
+    if (volumeSlider) {
+        volumeSlider.value = musicVolume;
+    }
+
+    if (isMusicEnabled) {
+        backgroundMusic.play().catch(e => {
+            console.log('自动播放被阻止:', e);
+        });
+        musicToggle.classList.add('playing');
+        musicToggle.textContent = '🎵';
+    } else {
+        musicToggle.textContent = '🔇';
+    }
+
+    // 点击切换播放/暂停
+    musicToggle.addEventListener('click', function () {
+        if (backgroundMusic.paused) {
+            backgroundMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+                musicToggle.textContent = '🎵';
+                localStorage.setItem('musicEnabled', 'true');
+            }).catch(e => {
+                console.log('播放失败:', e);
+                showNotification('无法播放音乐，请检查浏览器设置', 'error');
+            });
+        } else {
+            backgroundMusic.pause();
+            musicToggle.classList.remove('playing');
+            musicToggle.textContent = '🔇';
+            localStorage.setItem('musicEnabled', 'false');
+        }
+    });
+
+    // 音量控制
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', function () {
+            backgroundMusic.volume = this.value;
+            localStorage.setItem('musicVolume', this.value);
+        });
+    }
+
+    // 监听音乐播放状态
+    backgroundMusic.addEventListener('play', function () {
+        musicToggle.classList.add('playing');
+        musicToggle.textContent = '🎵';
+    });
+
+    backgroundMusic.addEventListener('pause', function () {
+        musicToggle.classList.remove('playing');
+        musicToggle.textContent = '🔇';
+    });
+
+    // 监听音乐结束
+    backgroundMusic.addEventListener('ended', function () {
+        backgroundMusic.currentTime = 0;
+        backgroundMusic.play();
+    });
+
+    // 音量变化监听
+    backgroundMusic.addEventListener('volumechange', function () {
+        localStorage.setItem('musicVolume', backgroundMusic.volume);
+    });
+}
+
+// 页面加载完成后初始化功能
+document.addEventListener('DOMContentLoaded', function () {
+    initBackToTop();
+    initMusicPlayer();
+});
+
 // 导出函数供其他脚本使用
 window.CategoryPage = {
     viewMovie,
     addToFavorites,
     resetFilters,
     handleMovieCardClick,
-    renderMoviesWithNavigation
+    renderMoviesWithNavigation,
+    initBreadcrumb,
+    addBreadcrumb,
+    initBackToTop,
+    initMusicPlayer
 };

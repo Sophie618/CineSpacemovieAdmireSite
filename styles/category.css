@@ -6,6 +6,25 @@ body {
     background-repeat: no-repeat;
 }
 
+/* 通知样式 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #3498db;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    max-width: 300px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
 .container {
     background: rgba(0, 0, 0, 0);
     backdrop-filter: blur(1px);

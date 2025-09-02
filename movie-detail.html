@@ -47,10 +47,7 @@
                     <div class="movie-poster-large">
                         <img id="movie-poster" src="" alt="电影海报" class="poster-image">
                         <div class="poster-overlay">
-                            <button class="play-trailer-btn" onclick="playTrailer()">
-                                <span class="play-icon">▶</span>
-                                播放预告片
-                            </button>
+                            <!-- 海报显示区域 -->
                         </div>
                     </div>
 
@@ -77,21 +74,15 @@
                     </div>
                 </div>
 
-                <!-- 电影海报展示区域 -->
-                <section class="gallery-section">
-                    <h2>电影海报</h2>
-                    <div class="gallery-container">
-                        <div class="gallery-main">
-                            <img id="main-gallery-image" src="" alt="电影海报" class="main-gallery-img">
-                            <div class="gallery-overlay">
-                                <button class="gallery-zoom-btn" onclick="openGalleryModal()">
-                                    <span class="zoom-icon">🔍</span>
-                                    查看大图
-                                </button>
+                <!-- 视频播放区域 -->
+                <section class="video-section">
+                    <h2>预告片</h2>
+                    <div class="video-container">
+                        <div class="video-player">
+                            <div class="video-placeholder">
+                                <div class="video-icon">🎬</div>
+                                <p>视频内容将在此处显示</p>
                             </div>
-                        </div>
-                        <div class="gallery-thumbnails" id="gallery-thumbnails">
-                            <!-- 缩略图将通过JavaScript动态生成 -->
                         </div>
                     </div>
                 </section>
@@ -151,17 +142,33 @@
         </footer>
     </div>
 
-    <!-- 图片查看模态框 -->
-    <div id="gallery-modal" class="gallery-modal">
+    <!-- 视频播放模态框（预留） -->
+    <div id="video-modal" class="video-modal" style="display: none;">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeGalleryModal()">&times;</span>
-            <img id="modal-image" src="" alt="电影海报" class="modal-img">
-            <div class="modal-nav">
-                <button class="modal-prev" onclick="previousImage()">❮</button>
-                <button class="modal-next" onclick="nextImage()">❯</button>
+            <span class="modal-close" onclick="closeVideoModal()">&times;</span>
+            <div class="video-player-modal">
+                <!-- 视频播放器将在此处显示 -->
             </div>
         </div>
     </div>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="back-to-top" title="返回顶部">↑</button>
+
+    <!-- 音乐控制按钮 -->
+    <div class="music-controls">
+        <button id="music-toggle" class="music-toggle" title="播放/暂停音乐">🎵</button>
+        <div class="volume-control">
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.3" title="音量控制">
+        </div>
+    </div>
+
+    <!-- 背景音乐 -->
+    <audio id="background-music" loop>
+        <source src="public/audio/background-music.mp3" type="audio/mpeg">
+        <source src="public/audio/background-music.ogg" type="audio/ogg">
+        您的浏览器不支持音频播放。
+    </audio>
 
     <script src="js/movie-detail.js"></script>
 </body>

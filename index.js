@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initCategoryCards();
     initSearchFunction();
     initBackToTop();
+    initMusicPlayer();
     initPageAnimations();
     initKeyboardShortcuts();
     initNavigation();
@@ -15,11 +16,14 @@ function initCategoryCards() {
 
     categoryCards.forEach(card => {
         card.addEventListener('click', function (e) {
-            // 如果点击的是链接本身，不阻止默认行为
+            // 如果点击的是链接本身，让链接自然跳转
             if (e.target.tagName === 'A') {
-                return;
+                const categoryName = this.querySelector('h3').textContent;
+                showNotification(`正在跳转到${categoryName}页面...`);
+                return; // 让链接自然跳转
             }
 
+            // 如果点击的是卡片其他区域，手动跳转
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = '';
@@ -33,7 +37,7 @@ function initCategoryCards() {
 
             setTimeout(() => {
                 console.log(`跳转到: ${categoryLink}`);
-                window.location.href = categoryLink; // 启用真实跳转
+                window.location.href = categoryLink;
             }, 1000);
         });
     });
@@ -98,6 +102,86 @@ function initBackToTop() {
             });
         });
     }
+}
+
+function initMusicPlayer() {
+    const musicToggle = document.getElementById('music-toggle');
+    const backgroundMusic = document.getElementById('background-music');
+    const volumeSlider = document.getElementById('volume-slider');
+
+    if (!musicToggle || !backgroundMusic) {
+        console.log('音乐播放器元素未找到');
+        return;
+    }
+
+    // 从本地存储获取音乐状态
+    const isMusicEnabled = localStorage.getItem('musicEnabled') === 'true';
+    const musicVolume = parseFloat(localStorage.getItem('musicVolume')) || 0.3;
+
+    // 设置初始状态
+    backgroundMusic.volume = musicVolume;
+    if (volumeSlider) {
+        volumeSlider.value = musicVolume;
+    }
+
+    if (isMusicEnabled) {
+        backgroundMusic.play().catch(e => {
+            console.log('自动播放被阻止:', e);
+        });
+        musicToggle.classList.add('playing');
+        musicToggle.textContent = '🎵';
+    } else {
+        musicToggle.textContent = '🔇';
+    }
+
+    // 点击切换播放/暂停
+    musicToggle.addEventListener('click', function () {
+        if (backgroundMusic.paused) {
+            backgroundMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+                musicToggle.textContent = '🎵';
+                localStorage.setItem('musicEnabled', 'true');
+            }).catch(e => {
+                console.log('播放失败:', e);
+                showNotification('无法播放音乐，请检查浏览器设置', 'error');
+            });
+        } else {
+            backgroundMusic.pause();
+            musicToggle.classList.remove('playing');
+            musicToggle.textContent = '🔇';
+            localStorage.setItem('musicEnabled', 'false');
+        }
+    });
+
+    // 音量控制
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', function () {
+            backgroundMusic.volume = this.value;
+            localStorage.setItem('musicVolume', this.value);
+        });
+    }
+
+    // 监听音乐播放状态
+    backgroundMusic.addEventListener('play', function () {
+        musicToggle.classList.add('playing');
+        musicToggle.textContent = '🎵';
+    });
+
+    backgroundMusic.addEventListener('pause', function () {
+        musicToggle.classList.remove('playing');
+        musicToggle.textContent = '🔇';
+    });
+
+    // 监听音乐结束
+    backgroundMusic.addEventListener('ended', function () {
+        backgroundMusic.currentTime = 0;
+        backgroundMusic.play();
+    });
+
+    // 音量变化监听
+    backgroundMusic.addEventListener('volumechange', function () {
+        localStorage.setItem('musicVolume', backgroundMusic.volume);
+    });
 }
 
 function initPageAnimations() {
@@ -411,19 +495,11 @@ function validateNavigation() {
         link.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
 
-            // 检查是否是有效的内部链接
+            // 只对导航栏链接显示跳转提示，不阻止任何跳转
             if (href && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('tel')) {
-                // 检查文件是否存在（简单检查）
-                if (href.includes('.html') && !isValidPage(href)) {
-                    e.preventDefault();
-                    showNotification('页面不存在或正在开发中', 'error');
-                    console.warn(`页面不存在: ${href}`);
-                } else {
-                    // 如果是有效页面，显示跳转提示
-                    const linkText = this.textContent.trim();
-                    if (linkText && !linkText.includes('查看详情')) {
-                        showNotification(`正在跳转到${linkText}...`, 'info');
-                    }
+                const linkText = this.textContent.trim();
+                if (linkText && !linkText.includes('查看详情') && this.closest('.nav-links')) {
+                    showNotification(`正在跳转到${linkText}...`, 'info');
                 }
             }
         });
