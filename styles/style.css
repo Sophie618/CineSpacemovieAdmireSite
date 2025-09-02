@@ -11,7 +11,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
-    background-image: url('./public/images/background.jpg');
+    background-image: url('../public/images/background.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -90,7 +90,7 @@ body {
 .hero {
     text-align: center;
     padding: 3rem 15px;
-    background-image: url('./public/images/banners/Movie.jpg');
+    background-image: url('../public/images/banners/Movie.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -215,27 +215,27 @@ body {
 }
 
 .category-card.action-card {
-    background-image: url('./public/images/banners/Action.jpeg');
+    background-image: url('../public/images/banners/Action.jpeg');
 }
 
 .category-card.drama-card {
-    background-image: url('./public/images/banners/drama.jpg');
+    background-image: url('../public/images/banners/drama.jpg');
 }
 
 .category-card.comedy-card {
-    background-image: url('./public/images/banners/comedy.jpg');
+    background-image: url('../public/images/banners/comedy.jpg');
 }
 
 .category-card.scifi-card {
-    background-image: url('./public/images/banners/sci-fi.jpg');
+    background-image: url('../public/images/banners/sci-fi.jpg');
 }
 
 .category-card.animation-card {
-    background-image: url('./public/images/banners/Animation.png');
+    background-image: url('../public/images/banners/Animation.png');
 }
 
 .category-card.romance-card {
-    background-image: url('./public/images/banners/romance.jpg');
+    background-image: url('../public/images/banners/romance.jpg');
 }
 
 /* 遮罩层 */
