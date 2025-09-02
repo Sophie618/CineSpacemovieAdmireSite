@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景图片调试 - CineSpace</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .debug-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .debug-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .test-image {
+            max-width: 200px;
+            max-height: 150px;
+            border: 2px solid #ddd;
+            margin: 10px;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 3px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .path-test {
+            background: #e9ecef;
+            padding: 0.5rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="debug-container">
+        <h1>背景图片调试工具</h1>
+        <p>此工具将帮助诊断背景图片无法显示的问题。</p>
+
+        <div class="debug-section">
+            <h3>1. 文件路径测试</h3>
+            <p>测试不同的图片路径：</p>
+            <div id="path-tests"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>2. 图片加载测试</h3>
+            <div id="image-tests"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>3. CSS路径测试</h3>
+            <p>测试CSS中使用的路径：</p>
+            <div id="css-tests"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>4. 浏览器信息</h3>
+            <div id="browser-info"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>5. 解决方案</h3>
+            <div id="solutions"></div>
+        </div>
+    </div>
+
+    <script>
+        function addStatus(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            container.appendChild(statusDiv);
+        }
+
+        function testImagePath(path, description) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve({ success: true, path, description });
+                img.onerror = () => resolve({ success: false, path, description });
+                img.src = path;
+            });
+        }
+
+        async function runDiagnostics() {
+            // 1. 文件路径测试
+            const pathTests = [
+                'public/images/background.jpg',
+                './public/images/background.jpg',
+                '../public/images/background.jpg',
+                'public/images/bg2.jpg',
+                './public/images/bg2.jpg',
+                '../public/images/bg2.jpg'
+            ];
+
+            const pathContainer = document.getElementById('path-tests');
+            for (const path of pathTests) {
+                const result = await testImagePath(path, `测试路径: ${path}`);
+                const status = result.success ? 'success' : 'error';
+                const icon = result.success ? '✓' : '✗';
+                addStatus('path-tests', `${icon} ${path}`, status);
+            }
+
+            // 2. 图片加载测试
+            const imageContainer = document.getElementById('image-tests');
+
+            // 测试主页背景
+            const homeBg = new Image();
+            homeBg.onload = function () {
+                addStatus('image-tests', '✓ 主页背景图片 (background.jpg) 加载成功', 'success');
+                const img = document.createElement('img');
+                img.src = 'public/images/background.jpg';
+                img.className = 'test-image';
+                img.alt = 'background.jpg';
+                imageContainer.appendChild(img);
+            };
+            homeBg.onerror = function () {
+                addStatus('image-tests', '✗ 主页背景图片 (background.jpg) 加载失败', 'error');
+            };
+            homeBg.src = 'public/images/background.jpg';
+
+            // 测试子页面背景
+            const subBg = new Image();
+            subBg.onload = function () {
+                addStatus('image-tests', '✓ 子页面背景图片 (bg2.jpg) 加载成功', 'success');
+                const img = document.createElement('img');
+                img.src = 'public/images/bg2.jpg';
+                img.className = 'test-image';
+                img.alt = 'bg2.jpg';
+                imageContainer.appendChild(img);
+            };
+            subBg.onerror = function () {
+                addStatus('image-tests', '✗ 子页面背景图片 (bg2.jpg) 加载失败', 'error');
+            };
+            subBg.src = 'public/images/bg2.jpg';
+
+            // 3. CSS路径测试
+            addStatus('css-tests', '当前CSS中使用的路径:', 'info');
+            addStatus('css-tests', 'styles/style.css: url(\'../public/images/background.jpg\')', 'info');
+            addStatus('css-tests', 'styles/category.css: url(\'../public/images/bg2.jpg\')', 'info');
+
+            // 4. 浏览器信息
+            const browserInfo = document.getElementById('browser-info');
+            addStatus('browser-info', `用户代理: ${navigator.userAgent}`, 'info');
+            addStatus('browser-info', `当前URL: ${window.location.href}`, 'info');
+            addStatus('browser-info', `协议: ${window.location.protocol}`, 'info');
+
+            // 5. 解决方案
+            const solutions = document.getElementById('solutions');
+            addStatus('solutions', '<strong>如果图片无法显示，请尝试以下解决方案：</strong>', 'warning');
+            addStatus('solutions', '1. 确保图片文件存在于 public/images/ 目录', 'info');
+            addStatus('solutions', '2. 检查文件名是否正确（区分大小写）', 'info');
+            addStatus('solutions', '3. 尝试使用不同的图片格式（JPG, PNG, WebP）', 'info');
+            addStatus('solutions', '4. 清除浏览器缓存（Ctrl+F5）', 'info');
+            addStatus('solutions', '5. 检查浏览器控制台是否有错误信息', 'info');
+            addStatus('solutions', '6. 尝试使用本地服务器而不是直接打开HTML文件', 'info');
+
+            // 添加本地服务器建议
+            addStatus('solutions', '<strong>推荐使用本地服务器：</strong>', 'warning');
+            addStatus('solutions', '如果直接打开HTML文件，某些浏览器可能限制本地文件访问', 'info');
+            addStatus('solutions', '建议使用以下方法之一启动本地服务器：', 'info');
+            addStatus('solutions', '• Python: python -m http.server 8000', 'info');
+            addStatus('solutions', '• Node.js: npx http-server', 'info');
+            addStatus('solutions', '• VS Code: 安装 Live Server 扩展', 'info');
+        }
+
+        // 页面加载完成后运行诊断
+        document.addEventListener('DOMContentLoaded', runDiagnostics);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>喜剧片 - CineSpace</title>
+    <meta name="description" content="发现最新最热门的喜剧电影">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/category.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <div class="logo">
+                    <img src="public/images/logo.svg" alt="CineSpace" class="logo-img">
+                    <h1><a href="index.html" style="color: white; text-decoration: none;">CineSpace</a></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="action.html">动作片</a></li>
+                    <li><a href="drama.html">剧情片</a></li>
+                    <li><a href="comedy.html" class="active">喜剧片</a></li>
+                    <li><a href="sci-fi.html">科幻片</a></li>
+                    <li><a href="animation.html">动画片</a></li>
+                    <li><a href="romance.html">爱情片</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main">
+            <section class="page-header comedy-header">
+                <div class="header-overlay">
+                    <h1>喜剧片</h1>
+                    <p>轻松幽默的喜剧，带给你欢乐的观影时光</p>
+                </div>
+            </section>
+
+            <section class="search-section">
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="在喜剧片中搜索...">
+                    <button id="search-btn" class="search-btn">搜索</button>
+                </div>
+            </section>
+
+            <section class="movies-section">
+                <div class="section-header">
+                    <h2>热门喜剧片</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="recent">最新</button>
+                        <button class="filter-btn" data-filter="popular">热门</button>
+                        <button class="filter-btn" data-filter="rating">评分</button>
+                    </div>
+                </div>
+
+                <div class="movies-grid" id="movies-grid">
+                    <!-- 电影卡片将通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <section class="pagination-section">
+                <div class="pagination">
+                    <button class="page-btn" id="prev-page" disabled>上一页</button>
+                    <span class="page-info">
+                        <span id="current-page">1</span> / <span id="total-pages">5</span>
+                    </span>
+                    <button class="page-btn" id="next-page">下一页</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 CineSpace. All rights reserved..</p>
+            </div>
+        </footer>
+    </div>
+
+    <button id="back-to-top" class="back-to-top" title="返回顶部">↑</button>
+
+    <script src="index.js"></script>
+    <script src="js/category.js"></script>
+</body>
+
+</html>

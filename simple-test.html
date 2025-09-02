@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单图片测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .image-test {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .test-image {
+            max-width: 300px;
+            max-height: 200px;
+            border: 2px solid #ccc;
+            margin: 10px 0;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>图片访问测试</h1>
+
+        <div class="image-test">
+            <h3>测试1: 直接显示图片</h3>
+            <p>如果下面能看到图片，说明文件路径正确：</p>
+            <img src="public/images/background.jpg" alt="background.jpg" class="test-image"
+                onload="document.getElementById('status1').innerHTML='✓ background.jpg 加载成功'; document.getElementById('status1').className='status success';"
+                onerror="document.getElementById('status1').innerHTML='✗ background.jpg 加载失败'; document.getElementById('status1').className='status error';">
+            <div id="status1" class="status">加载中...</div>
+        </div>
+
+        <div class="image-test">
+            <h3>测试2: 直接显示图片</h3>
+            <p>如果下面能看到图片，说明文件路径正确：</p>
+            <img src="public/images/bg2.jpg" alt="bg2.jpg" class="test-image"
+                onload="document.getElementById('status2').innerHTML='✓ bg2.jpg 加载成功'; document.getElementById('status2').className='status success';"
+                onerror="document.getElementById('status2').innerHTML='✗ bg2.jpg 加载失败'; document.getElementById('status2').className='status error';">
+            <div id="status2" class="status">加载中...</div>
+        </div>
+
+        <div class="image-test">
+            <h3>测试3: CSS背景测试</h3>
+            <p>下面的div应该显示background.jpg作为背景：</p>
+            <div
+                style="width: 300px; height: 200px; background-image: url('public/images/background.jpg'); background-size: cover; background-position: center; border: 2px solid #ccc; margin: 10px 0;">
+                <div style="background: rgba(255,255,255,0.8); padding: 10px; margin-top: 150px;">
+                    如果能看到背景图片，说明CSS路径正确
+                </div>
+            </div>
+        </div>
+
+        <div class="image-test">
+            <h3>测试4: CSS背景测试（相对路径）</h3>
+            <p>下面的div应该显示bg2.jpg作为背景：</p>
+            <div
+                style="width: 300px; height: 200px; background-image: url('./public/images/bg2.jpg'); background-size: cover; background-position: center; border: 2px solid #ccc; margin: 10px 0;">
+                <div style="background: rgba(255,255,255,0.8); padding: 10px; margin-top: 150px;">
+                    如果能看到背景图片，说明相对路径正确
+                </div>
+            </div>
+        </div>
+
+        <div class="image-test">
+            <h3>文件信息</h3>
+            <p>根据系统检查，你的图片文件信息：</p>
+            <ul>
+                <li>background.jpg: 715,017 字节 (约 715KB)</li>
+                <li>bg2.jpg: 4,533,548 字节 (约 4.5MB)</li>
+            </ul>
+            <p><strong>注意：</strong>bg2.jpg 文件较大，可能需要较长时间加载。</p>
+        </div>
+
+        <div class="image-test">
+            <h3>建议解决方案</h3>
+            <ol>
+                <li><strong>如果图片不显示：</strong>尝试使用本地服务器而不是直接打开HTML文件</li>
+                <li><strong>如果加载很慢：</strong>bg2.jpg文件较大，建议压缩到2MB以下</li>
+                <li><strong>如果路径错误：</strong>确保图片文件在 public/images/ 目录下</li>
+                <li><strong>如果浏览器限制：</strong>某些浏览器限制本地文件访问，需要使用HTTP服务器</li>
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>

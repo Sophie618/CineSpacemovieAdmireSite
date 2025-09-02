@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景图片测试 - CineSpace</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>背景图片测试页面</h1>
+        <p>此页面用于测试背景图片是否正确加载。</p>
+
+        <div class="test-section">
+            <h3>测试说明</h3>
+            <p>如果你能看到背景图片，说明配置成功。如果看不到背景图片，请检查以下项目：</p>
+            <ul>
+                <li>图片文件是否存在于 <code>public/images/</code> 目录</li>
+                <li>文件名是否正确：<code>background.jpg</code> 和 <code>bg2.jpg</code></li>
+                <li>图片格式是否被浏览器支持</li>
+                <li>文件路径是否正确</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>当前状态</h3>
+            <div id="status-container">
+                <div class="status info">正在检测背景图片...</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>文件检查</h3>
+            <div id="file-check">
+                <div class="status info">检查中...</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>解决方案</h3>
+            <p>如果背景图片不显示，请尝试以下解决方案：</p>
+            <ol>
+                <li><strong>检查文件路径</strong>：确保图片文件在 <code>public/images/</code> 目录下</li>
+                <li><strong>检查文件名</strong>：确保文件名完全匹配（区分大小写）</li>
+                <li><strong>检查文件格式</strong>：确保是 JPG、PNG 或 WebP 格式</li>
+                <li><strong>清除浏览器缓存</strong>：按 Ctrl+F5 强制刷新页面</li>
+                <li><strong>检查控制台错误</strong>：按 F12 打开开发者工具查看是否有错误</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // 测试背景图片加载
+        function testBackgroundImages() {
+            const statusContainer = document.getElementById('status-container');
+            const fileCheck = document.getElementById('file-check');
+
+            // 测试主页背景
+            const homeBg = new Image();
+            homeBg.onload = function () {
+                statusContainer.innerHTML = '<div class="status success">✓ 主页背景图片加载成功</div>';
+            };
+            homeBg.onerror = function () {
+                statusContainer.innerHTML = '<div class="status error">✗ 主页背景图片加载失败</div>';
+            };
+            homeBg.src = 'public/images/background.jpg';
+
+            // 测试子页面背景
+            const subBg = new Image();
+            subBg.onload = function () {
+                fileCheck.innerHTML = '<div class="status success">✓ 子页面背景图片加载成功</div>';
+            };
+            subBg.onerror = function () {
+                fileCheck.innerHTML = '<div class="status error">✗ 子页面背景图片加载失败</div>';
+            };
+            subBg.src = 'public/images/bg2.jpg';
+        }
+
+        // 页面加载完成后测试
+        document.addEventListener('DOMContentLoaded', testBackgroundImages);
+    </script>
+</body>
+
+</html>

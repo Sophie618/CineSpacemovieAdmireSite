@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">电影详情 - CineSpace</title>
+    <meta name="description" content="电影详细信息介绍">
+    <link rel="icon" href="public/images/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/movie-detail.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <div class="logo">
+                    <img src="public/images/logo.svg" alt="CineSpace" class="logo-img">
+                    <h1><a href="index.html" style="color: white; text-decoration: none;">CineSpace</a></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="action.html">动作片</a></li>
+                    <li><a href="drama.html">剧情片</a></li>
+                    <li><a href="comedy.html">喜剧片</a></li>
+                    <li><a href="sci-fi.html">科幻片</a></li>
+                    <li><a href="animation.html">动画片</a></li>
+                    <li><a href="romance.html">爱情片</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main">
+            <!-- 面包屑导航 -->
+            <nav class="breadcrumb">
+                <a href="index.html">首页</a>
+                <span class="separator">></span>
+                <a href="#" id="category-link">分类</a>
+                <span class="separator">></span>
+                <span id="movie-title-breadcrumb">电影标题</span>
+            </nav>
+
+            <!-- 电影详情区域 -->
+            <section class="movie-detail">
+                <div class="movie-header">
+                    <div class="movie-poster-large">
+                        <img id="movie-poster" src="" alt="电影海报" class="poster-image">
+                        <div class="poster-overlay">
+                            <button class="play-trailer-btn" onclick="playTrailer()">
+                                <span class="play-icon">▶</span>
+                                播放预告片
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="movie-info">
+                        <h1 id="movie-title">电影标题</h1>
+                        <div class="movie-meta">
+                            <span class="year" id="movie-year">2023</span>
+                            <span class="rating" id="movie-rating">8.5</span>
+                            <span class="category" id="movie-category">动作片</span>
+                        </div>
+                        <div class="movie-description" id="movie-description">
+                            电影简介内容...
+                        </div>
+                        <div class="movie-actions">
+                            <button class="btn btn-primary" onclick="addToFavorites()">
+                                <span class="icon">❤</span>
+                                收藏
+                            </button>
+                            <button class="btn btn-secondary" onclick="shareMovie()">
+                                <span class="icon">📤</span>
+                                分享
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 电影海报展示区域 -->
+                <section class="gallery-section">
+                    <h2>电影海报</h2>
+                    <div class="gallery-container">
+                        <div class="gallery-main">
+                            <img id="main-gallery-image" src="" alt="电影海报" class="main-gallery-img">
+                            <div class="gallery-overlay">
+                                <button class="gallery-zoom-btn" onclick="openGalleryModal()">
+                                    <span class="zoom-icon">🔍</span>
+                                    查看大图
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-thumbnails" id="gallery-thumbnails">
+                            <!-- 缩略图将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 详细信息 -->
+                <section class="movie-details">
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <h3>导演</h3>
+                            <p id="director">导演姓名</p>
+                        </div>
+                        <div class="detail-item">
+                            <h3>主演</h3>
+                            <p id="cast">主演名单</p>
+                        </div>
+                        <div class="detail-item">
+                            <h3>类型</h3>
+                            <p id="genres">电影类型</p>
+                        </div>
+                        <div class="detail-item">
+                            <h3>片长</h3>
+                            <p id="duration">120分钟</p>
+                        </div>
+                        <div class="detail-item">
+                            <h3>上映时间</h3>
+                            <p id="release-date">2023年</p>
+                        </div>
+                        <div class="detail-item">
+                            <h3>制片国家</h3>
+                            <p id="country">美国</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 剧情介绍 -->
+                <section class="plot-section">
+                    <h2>剧情介绍</h2>
+                    <div class="plot-content" id="plot-content">
+                        详细的剧情介绍内容...
+                    </div>
+                </section>
+
+                <!-- 相关推荐 -->
+                <section class="related-movies">
+                    <h2>相关推荐</h2>
+                    <div class="related-grid" id="related-movies">
+                        <!-- 相关电影卡片将通过JavaScript动态生成 -->
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 CineSpace. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 图片查看模态框 -->
+    <div id="gallery-modal" class="gallery-modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeGalleryModal()">&times;</span>
+            <img id="modal-image" src="" alt="电影海报" class="modal-img">
+            <div class="modal-nav">
+                <button class="modal-prev" onclick="previousImage()">❮</button>
+                <button class="modal-next" onclick="nextImage()">❯</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/movie-detail.js"></script>
+</body>
+
+</html>

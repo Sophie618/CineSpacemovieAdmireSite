@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineSpace - HOME</title>
+    <link rel="icon" href="public/images/logo.svg" type="image/svg+xml">
+    <meta name="description" content="欣赏最新最热门的电影">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <div class="logo">
+                    <img src="public/images/logo.svg" alt="CineSpace" class="logo-img">
+                    <h1>CineSpace</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="action.html">动作片</a></li>
+                    <li><a href="drama.html">剧情片</a></li>
+                    <li><a href="comedy.html">喜剧片</a></li>
+                    <li><a href="sci-fi.html">科幻片</a></li>
+                    <li><a href="animation.html">动画片</a></li>
+                    <li><a href="romance.html">爱情片</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main">
+            <section class="hero">
+                <h1>欢迎来到CineSpace</h1>
+                <p>欣赏最新最热门的电影，探索不同类型的精彩内容</p>
+
+                <!-- 搜索功能 -->
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="搜索电影...">
+                    <button id="search-btn" class="search-btn">搜索</button>
+                </div>
+            </section>
+            <div class="movie-description">
+                <br>电影有很多种，有些让你流泪，有些让你捧腹大笑；</br>
+                <p>有些让你回忆起美好的过往，有些让你期待未来的到来；</p>
+                <p>有些很现实，有些很飘渺；</p>
+                <p class="lastline">有些让你大脑高速运转，有些让你的心得以短暂休息。</p>
+                <br>电影，就是这么神奇的东西，</br>
+                <p>不管是哪一类的电影——剧情，动画，科幻，动作，悬疑……</p>
+                <p class="lastline">都能让你感受生活的魅力，想象的惊喜。</p>
+                <p>你问我电影是什么？</p>
+                <br>也许某一刻电影就是整个世界,</br>
+                <br>就是永恒。</br>
+            </div>
+            <section class="categories">
+                <h2>电影分类</h2>
+                <div class="category-grid">
+                    <div class="category-card action-card">
+                        <h3>动作片</h3>
+                        <p>刺激的动作电影</p>
+                        <a href="action.html" class="category-link">查看详情</a>
+                    </div>
+                    <div class="category-card drama-card">
+                        <h3>剧情片</h3>
+                        <p>深刻的剧情故事</p>
+                        <a href="drama.html" class="category-link">查看详情</a>
+                    </div>
+                    <div class="category-card comedy-card">
+                        <h3>喜剧片</h3>
+                        <p>轻松幽默的喜剧</p>
+                        <a href="comedy.html" class="category-link">查看详情</a>
+                    </div>
+                    <div class="category-card scifi-card">
+                        <h3>科幻片</h3>
+                        <p>未来世界的想象</p>
+                        <a href="sci-fi.html" class="category-link">查看详情</a>
+                    </div>
+                    <div class="category-card animation-card">
+                        <h3>动画片</h3>
+                        <p>精彩的动画世界</p>
+                        <a href="animation.html" class="category-link">查看详情</a>
+                    </div>
+                    <div class="category-card romance-card">
+                        <h3>爱情片</h3>
+                        <p>浪漫的爱情故事</p>
+                        <a href="romance.html" class="category-link">查看详情</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 CineSpace. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <button id="back-to-top" class="back-to-top" title="返回顶部">↑</button>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
