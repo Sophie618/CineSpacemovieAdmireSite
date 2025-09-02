@@ -14,7 +14,12 @@ function initCategoryCards() {
     const categoryCards = document.querySelectorAll('.category-card');
 
     categoryCards.forEach(card => {
-        card.addEventListener('click', function () {
+        card.addEventListener('click', function (e) {
+            // 如果点击的是链接本身，不阻止默认行为
+            if (e.target.tagName === 'A') {
+                return;
+            }
+
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = '';
@@ -413,6 +418,12 @@ function validateNavigation() {
                     e.preventDefault();
                     showNotification('页面不存在或正在开发中', 'error');
                     console.warn(`页面不存在: ${href}`);
+                } else {
+                    // 如果是有效页面，显示跳转提示
+                    const linkText = this.textContent.trim();
+                    if (linkText && !linkText.includes('查看详情')) {
+                        showNotification(`正在跳转到${linkText}...`, 'info');
+                    }
                 }
             }
         });
