@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索功能测试 - CineSpace</title>
+    <link rel="icon" href="public/images/logo.svg" type="image/svg+xml">
+    <meta name="description" content="测试CineSpace电影搜索功能">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <nav class="nav">
+                <div class="logo">
+                    <img src="public/images/logo.svg" alt="CineSpace" class="logo-img">
+                    <h1>CineSpace</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="action.html">动作片</a></li>
+                    <li><a href="drama.html">剧情片</a></li>
+                    <li><a href="comedy.html">喜剧片</a></li>
+                    <li><a href="sci-fi.html">科幻片</a></li>
+                    <li><a href="animation.html">动画片</a></li>
+                    <li><a href="romance.html">爱情片</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main">
+            <section class="hero">
+                <h1>搜索功能测试</h1>
+                <p>测试CineSpace电影搜索功能的各种特性</p>
+
+                <!-- 搜索功能 -->
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="输入关键词后点击搜索按钮...">
+                    <button id="search-btn" class="search-btn">搜索</button>
+                </div>
+            </section>
+
+            <section class="search-instructions">
+                <h2>搜索功能说明</h2>
+                <div class="instructions-grid">
+                    <div class="instruction-card">
+                        <h3>🎬 电影标题</h3>
+                        <p>搜索电影名称，如"速度与激情"、"碟中谍"</p>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>🎭 导演搜索</h3>
+                        <p>搜索导演姓名，如"克里斯托弗·诺兰"、"马丁·斯科塞斯"</p>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>👥 演员搜索</h3>
+                        <p>搜索主演姓名，如"汤姆·克鲁斯"、"基里安·墨菲"</p>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>🏷️ 类型搜索</h3>
+                        <p>搜索电影类型，如"动作"、"科幻"、"惊悚"</p>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>📅 年份搜索</h3>
+                        <p>搜索电影年份，如"2023"</p>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>🌍 国家搜索</h3>
+                        <p>搜索电影国家，如"美国"</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="test-examples">
+                <h2>测试示例</h2>
+                <div class="examples-grid">
+                    <button class="example-btn" onclick="testSearch('动作')">动作</button>
+                    <button class="example-btn" onclick="testSearch('汤姆·克鲁斯')">汤姆·克鲁斯</button>
+                    <button class="example-btn" onclick="testSearch('诺兰')">诺兰</button>
+                    <button class="example-btn" onclick="testSearch('2023')">2023</button>
+                    <button class="example-btn" onclick="testSearch('科幻')">科幻</button>
+                    <button class="example-btn" onclick="testSearch('美国')">美国</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 CineSpace. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <button id="back-to-top" class="back-to-top" title="返回顶部">↑</button>
+
+    <script src="index.js"></script>
+    <script>
+        // 测试搜索功能
+        function testSearch(searchTerm) {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = searchTerm;
+            handleSearch();
+        }
+    </script>
+</body>
+
+</html>

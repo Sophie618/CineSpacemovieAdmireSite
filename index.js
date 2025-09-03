@@ -1,15 +1,385 @@
+// 全局变量
+let movieData = {};
+let searchResults = [];
+let isSearchMode = false;
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🎬 CineSpace已加载完成！');
 
-    initCategoryCards();
-    initSearchFunction();
-    initBackToTop();
-    initMusicPlayer();
-    initPageAnimations();
-    initKeyboardShortcuts();
-    initNavigation();
+    // 首先加载电影数据，然后初始化其他功能
+    loadMovieData().then(() => {
+        initCategoryCards();
+        initSearchFunction();
+        initBackToTop();
+        initMusicPlayer();
+        initPageAnimations();
+        initKeyboardShortcuts();
+        initNavigation();
+    });
 });
+
+/**
+ * 加载电影数据
+ */
+async function loadMovieData() {
+    try {
+        const response = await fetch('data/movies.json');
+        const data = await response.json();
+        movieData = data.movies;
+        console.log('电影数据加载成功，共', Object.keys(movieData).length, '部电影');
+    } catch (error) {
+        console.error('加载电影数据失败:', error);
+        showNotification('加载电影数据失败，搜索功能可能不可用', 'error');
+    }
+}
+
+/**
+ * 初始化搜索功能
+ */
+function initSearchFunction() {
+    const searchButton = document.getElementById('search-btn');
+    const searchInput = document.getElementById('search-input');
+
+    if (searchButton && searchInput) {
+        // 点击搜索
+        searchButton.addEventListener('click', handleSearch);
+
+        // 回车键搜索
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+
+        // 搜索框获得焦点时显示搜索提示
+        searchInput.addEventListener('focus', function () {
+            if (this.value.trim().length === 0) {
+                showSearchSuggestions();
+            }
+        });
+        
+        // 清空搜索框时恢复分类展示
+        searchInput.addEventListener('input', function (e) {
+            const searchTerm = e.target.value.trim();
+            if (searchTerm.length === 0) {
+                clearSearch();
+            }
+        });
+    }
+}
+
+/**
+ * 处理搜索
+ */
+function handleSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-btn');
+    const searchTerm = searchInput.value.trim();
+
+    if (searchTerm) {
+        // 设置搜索按钮为加载状态
+        if (searchButton) {
+            searchButton.classList.add('loading');
+            searchButton.textContent = '搜索中';
+        }
+        
+        showNotification(`正在搜索: "${searchTerm}"`);
+        console.log(`搜索关键词: ${searchTerm}`);
+        
+        // 执行搜索
+        performSearch(searchTerm);
+        
+        // 搜索完成后恢复按钮状态
+        setTimeout(() => {
+            if (searchButton) {
+                searchButton.classList.remove('loading');
+                searchButton.textContent = '搜索';
+            }
+        }, 1000);
+    } else {
+        showNotification('请输入搜索关键词');
+        searchInput.focus();
+    }
+}
+
+/**
+ * 执行搜索
+ */
+function performSearch(searchTerm) {
+    if (Object.keys(movieData).length === 0) {
+        showNotification('电影数据未加载，请刷新页面重试', 'error');
+        return;
+    }
+
+    // 清空之前的结果
+    searchResults = [];
+    
+    // 搜索算法：多字段匹配
+    Object.entries(movieData).forEach(([movieId, movie]) => {
+        let score = 0;
+        const searchLower = searchTerm.toLowerCase();
+        
+        // 标题匹配（权重最高）
+        if (movie.title.toLowerCase().includes(searchLower)) {
+            score += 100;
+        }
+        
+        // 导演匹配
+        if (movie.director.toLowerCase().includes(searchLower)) {
+            score += 50;
+        }
+        
+        // 主演匹配
+        if (movie.cast.toLowerCase().includes(searchLower)) {
+            score += 40;
+        }
+        
+        // 类型匹配
+        if (movie.genres.toLowerCase().includes(searchLower)) {
+            score += 30;
+        }
+        
+        // 描述匹配
+        if (movie.description.toLowerCase().includes(searchLower)) {
+            score += 20;
+        }
+        
+        // 分类匹配
+        if (movie.category.toLowerCase().includes(searchLower)) {
+            score += 25;
+        }
+        
+        // 年份匹配
+        if (movie.year.toString().includes(searchTerm)) {
+            score += 15;
+        }
+        
+        // 国家匹配
+        if (movie.country.toLowerCase().includes(searchLower)) {
+            score += 10;
+        }
+        
+        // 如果找到匹配项，添加到结果中
+        if (score > 0) {
+            searchResults.push({
+                id: movieId,
+                movie: movie,
+                score: score
+            });
+        }
+    });
+    
+    // 按匹配度排序
+    searchResults.sort((a, b) => b.score - a.score);
+    
+    // 显示搜索结果
+    displaySearchResults(searchTerm);
+}
+
+/**
+ * 显示搜索结果
+ */
+function displaySearchResults(searchTerm) {
+    const main = document.querySelector('.main');
+    const categoriesSection = document.querySelector('.categories');
+    
+    if (searchResults.length === 0) {
+        showNotification(`没有找到包含"${searchTerm}"的电影`, 'info');
+        return;
+    }
+    
+    // 隐藏分类展示区域
+    if (categoriesSection) {
+        categoriesSection.style.display = 'none';
+    }
+    
+    // 创建搜索结果容器
+    let searchContainer = document.getElementById('search-results');
+    if (!searchContainer) {
+        searchContainer = document.createElement('section');
+        searchContainer.id = 'search-results';
+        searchContainer.className = 'search-results';
+        main.appendChild(searchContainer);
+    }
+    
+    // 清空之前的结果
+    searchContainer.innerHTML = '';
+    
+    // 添加搜索结果标题
+    const resultsHeader = document.createElement('div');
+    resultsHeader.className = 'search-results-header';
+    resultsHeader.innerHTML = `
+        <h2>搜索结果</h2>
+        <p>找到 ${searchResults.length} 部包含"${searchTerm}"的电影</p>
+        <button class="btn btn-secondary" onclick="clearSearch()">返回分类浏览</button>
+    `;
+    searchContainer.appendChild(resultsHeader);
+    
+    // 创建电影网格
+    const moviesGrid = document.createElement('div');
+    moviesGrid.className = 'movies-grid';
+    
+    // 渲染搜索结果
+    searchResults.forEach((result, index) => {
+        const movieCard = createMovieCard(result.movie, result.id, result.score);
+        moviesGrid.appendChild(movieCard);
+        
+        // 添加动画效果
+        setTimeout(() => {
+            movieCard.style.opacity = '1';
+            movieCard.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    searchContainer.appendChild(moviesGrid);
+    
+    // 显示成功通知
+    showNotification(`找到 ${searchResults.length} 部相关电影`, 'success');
+    
+    // 设置搜索模式
+    isSearchMode = true;
+    
+    // 自动滚动到搜索结果区域
+    setTimeout(() => {
+        scrollToSearchResults(searchContainer);
+    }, 100); // 短暂延迟确保DOM完全渲染
+}
+
+/**
+ * 创建电影卡片
+ */
+function createMovieCard(movie, movieId, score) {
+    const card = document.createElement('div');
+    card.className = 'movie-card search-result-card';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    
+    // 获取海报图片
+    const posterImage = getPosterImage(movieId);
+    
+    card.innerHTML = `
+        <div class="movie-poster" style="background-image: url('public/images/posters/${posterImage}');">
+            <div class="poster-overlay">
+                <span class="movie-title-overlay">${movie.title}</span>
+                <div class="search-score">匹配度: ${score}</div>
+            </div>
+        </div>
+        <div class="movie-info">
+            <h3 class="movie-title">${movie.title}</h3>
+            <div class="movie-meta">
+                <span class="movie-year">${movie.year}</span>
+                <span class="movie-category">${movie.category}</span>
+                <div class="movie-rating">
+                    <span class="rating-stars">★★★★★</span>
+                    <span>${movie.rating}</span>
+                </div>
+            </div>
+            <p class="movie-description">${movie.description}</p>
+            <div class="movie-details">
+                <p><strong>导演:</strong> ${movie.director}</p>
+                <p><strong>主演:</strong> ${movie.cast}</p>
+                <p><strong>类型:</strong> ${movie.genres}</p>
+            </div>
+            <div class="movie-actions">
+                <button class="btn btn-primary" onclick="viewMovie('${movieId}')">查看详情</button>
+                <button class="btn btn-secondary" onclick="addToFavorites('${movieId}')">收藏</button>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+/**
+ * 获取电影海报图片
+ */
+function getPosterImage(movieId) {
+    const posterMap = {
+        1: 'action1.jpg', 2: 'action2.jpg', 3: 'action3.jpg', 4: 'action4.jpg', 5: 'action5.jpg',
+        6: 'drama1.jpg', 7: 'drama2.jpg', 8: 'drama3.jpg',
+        9: 'comedy1.jpg', 10: 'comedy2.jpg', 11: 'comedy3.jpg',
+        12: 'scifi1.jpg', 13: 'scifi2.jpg', 14: 'scifi3.jpg',
+        15: 'animation1.jpg', 16: 'animation2.jpg', 17: 'animation3.jpg',
+        18: 'romance1.jpg', 19: 'romance2.jpg', 20: 'romance3.jpg'
+    };
+    
+    return posterMap[movieId] || 'action1.jpg';
+}
+
+/**
+ * 清空搜索
+ */
+function clearSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchContainer = document.getElementById('search-results');
+    const categoriesSection = document.querySelector('.categories');
+    
+    // 清空搜索框
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    
+    // 移除搜索结果
+    if (searchContainer) {
+        searchContainer.remove();
+    }
+    
+    // 显示分类展示区域
+    if (categoriesSection) {
+        categoriesSection.style.display = 'block';
+    }
+    
+    // 重置搜索状态
+    searchResults = [];
+    isSearchMode = false;
+    
+    showNotification('已返回分类浏览', 'info');
+}
+
+/**
+ * 显示搜索建议
+ */
+function showSearchSuggestions() {
+    const suggestions = [
+        '动作片', '剧情片', '喜剧片', '科幻片', '动画片', '爱情片',
+        '汤姆·克鲁斯', '基里安·墨菲', '克里斯托弗·诺兰', '马丁·斯科塞斯',
+        '2023', '美国', '动作', '惊悚', '冒险'
+    ];
+    
+    // 这里可以显示搜索建议，比如下拉菜单
+    console.log('搜索建议:', suggestions);
+}
+
+/**
+ * 查看电影详情
+ */
+function viewMovie(movieId) {
+    console.log('查看电影详情:', movieId);
+    showNotification(`正在跳转到电影详情页面...`, 'info');
+    
+    setTimeout(() => {
+        window.location.href = `movie-detail.html?id=${movieId}`;
+    }, 1000);
+}
+
+/**
+ * 添加到收藏
+ */
+function addToFavorites(movieId) {
+    const movie = movieData[movieId];
+    if (movie) {
+        showNotification(`《${movie.title}》已添加到收藏夹`, 'success');
+        console.log(`添加到收藏: ${movie.title}`);
+        
+        // 这里可以添加收藏逻辑，比如保存到localStorage
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        if (!favorites.includes(movieId)) {
+            favorites.push(movieId);
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+    }
+}
 
 function initCategoryCards() {
     const categoryCards = document.querySelectorAll('.category-card');
@@ -41,44 +411,6 @@ function initCategoryCards() {
             }, 1000);
         });
     });
-}
-
-/**
- * 初始化搜索功能
- */
-function initSearchFunction() {
-    const searchButton = document.getElementById('search-btn');
-    const searchInput = document.getElementById('search-input');
-
-    if (searchButton && searchInput) {
-        // 点击搜索
-        searchButton.addEventListener('click', handleSearch);
-
-        // 回车键搜索
-        searchInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleSearch();
-            }
-        });
-    }
-}
-
-function handleSearch() {
-    const searchInput = document.getElementById('search-input');
-    const searchTerm = searchInput.value.trim();
-
-    if (searchTerm) {
-        showNotification(`正在搜索: "${searchTerm}"`);
-        console.log(`搜索关键词: ${searchTerm}`);
-
-        // 模拟搜索延迟
-        setTimeout(() => {
-            showNotification(`找到 ${Math.floor(Math.random() * 50) + 10} 部相关电影`);
-        }, 1500);
-    } else {
-        showNotification('请输入搜索关键词');
-        searchInput.focus();
-    }
 }
 
 function initBackToTop() {
@@ -521,6 +853,90 @@ function isValidPage(href) {
     ];
 
     return validPages.includes(href);
+}
+
+/**
+ * 自动滚动到搜索结果区域
+ */
+function scrollToSearchResults(searchContainer) {
+    if (searchContainer) {
+        // 计算搜索结果区域的位置
+        const containerRect = searchContainer.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const targetPosition = scrollTop + containerRect.top - 120; // 减去120px的偏移，让标题更清晰可见
+        
+        // 显示滚动指示器
+        showScrollIndicator();
+        
+        // 平滑滚动到搜索结果区域
+        window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
+        
+        // 滚动完成后添加高亮效果
+        setTimeout(() => {
+            highlightSearchResults(searchContainer);
+            hideScrollIndicator();
+        }, 800); // 等待滚动完成
+    }
+}
+
+/**
+ * 显示滚动指示器
+ */
+function showScrollIndicator() {
+    // 创建滚动指示器
+    let indicator = document.getElementById('scroll-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'scroll-indicator';
+        indicator.innerHTML = `
+            <div class="scroll-indicator-content">
+                <span class="scroll-icon">↓</span>
+                <span class="scroll-text">正在跳转到搜索结果...</span>
+            </div>
+        `;
+        document.body.appendChild(indicator);
+    }
+    
+    // 显示指示器
+    indicator.style.display = 'block';
+    setTimeout(() => {
+        indicator.style.opacity = '1';
+        indicator.style.transform = 'translateY(0)';
+    }, 100);
+}
+
+/**
+ * 隐藏滚动指示器
+ */
+function hideScrollIndicator() {
+    const indicator = document.getElementById('scroll-indicator');
+    if (indicator) {
+        indicator.style.opacity = '0';
+        indicator.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+            indicator.style.display = 'none';
+        }, 300);
+    }
+}
+
+/**
+ * 高亮搜索结果区域
+ */
+function highlightSearchResults(searchContainer) {
+    // 添加高亮类
+    searchContainer.classList.add('highlighted');
+    
+    // 添加高亮动画效果
+    searchContainer.style.animation = 'searchHighlight 2s ease';
+    
+    // 2秒后移除动画和高亮类
+    setTimeout(() => {
+        searchContainer.style.animation = '';
+        searchContainer.classList.remove('highlighted');
+    }, 2000);
 }
 
 window.MovieWebsite = {
