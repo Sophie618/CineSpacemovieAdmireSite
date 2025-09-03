@@ -6,6 +6,74 @@ body {
     background-repeat: no-repeat;
 }
 
+/* 面包屑导航样式 */
+.breadcrumb {
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    color: #fff;
+    background: rgba(44, 62, 80, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.breadcrumb::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3498db, #2980b9, #3498db);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.breadcrumb a {
+    color: #3498db;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    position: relative;
+    font-weight: 500;
+}
+
+.breadcrumb a:hover {
+    color: #fff;
+    background: rgba(52, 152, 219, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.breadcrumb a:active {
+    transform: translateY(0);
+}
+
+.breadcrumb .separator {
+    margin: 0 0.8rem;
+    color: #bdc3c7;
+    font-weight: bold;
+    position: relative;
+    top: -2px;
+}
+
+.breadcrumb .separator::before {
+    content: '›';
+    font-size: 1.2rem;
+    color: #3498db;
+    text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
 /* 通知样式 */
 .notification {
     position: fixed;

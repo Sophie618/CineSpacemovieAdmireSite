@@ -654,11 +654,9 @@ function addBreadcrumb(pageType) {
     const breadcrumb = document.createElement('nav');
     breadcrumb.className = 'breadcrumb';
     breadcrumb.innerHTML = `
-        <div class="breadcrumb-content">
-            <a href="index.html" class="breadcrumb-link">首页</a>
-            <span class="breadcrumb-separator">></span>
-            <span class="breadcrumb-current">${getPageTitle(pageType)}</span>
-        </div>
+        <a href="index.html">首页</a>
+        <span class="separator"></span>
+        <span>${getPageTitle(pageType)}</span>
     `;
 
     // 在main的第一个子元素前插入面包屑
@@ -688,46 +686,9 @@ function getPageTitle(pageType) {
  * 添加面包屑样式
  */
 function addBreadcrumbStyles() {
-    if (document.getElementById('breadcrumb-styles')) return;
-
-    const style = document.createElement('style');
-    style.id = 'breadcrumb-styles';
-    style.textContent = `
-        .breadcrumb {
-            background: #f8f9fa;
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-            border-radius: 5px;
-        }
-        
-        .breadcrumb-content {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .breadcrumb-link {
-            color: #3498db;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .breadcrumb-link:hover {
-            color: #2980b9;
-        }
-        
-        .breadcrumb-separator {
-            color: #666;
-        }
-        
-        .breadcrumb-current {
-            color: #2c3e50;
-            font-weight: 500;
-        }
-    `;
-
-    document.head.appendChild(style);
+    // 不再动态创建样式，使用CSS文件中定义的样式
+    // 这样可以确保面包屑使用我们美化的样式
+    console.log('面包屑样式已从CSS文件加载');
 }
 
 /**
