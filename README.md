@@ -28,7 +28,7 @@ CineSpace_new/
 
 ## 🚀 快速开始
 
-1. **直接打开**：双击 `index.html` 文件即可在浏览器中查看
+1. **GitHub Pages**；点击[这里](https://sophie618.github.io/CineSpacemovieAdmireSite/)跳转
 2. **本地服务器**：使用任何HTTP服务器运行项目
 3. **Node.js服务器**：运行 `node start-server.js` 启动本地服务器
 
